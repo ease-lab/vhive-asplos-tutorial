@@ -1,4 +1,4 @@
-service: ServerlessTutorial_1_HelloWorld
+service: ServerlessTutorialHelloWorld
 
 frameworkVersion: ">=1.2.0"
 
