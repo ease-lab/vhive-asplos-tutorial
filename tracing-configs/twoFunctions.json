@@ -1,0 +1,14 @@
+{
+    "functions": [
+        {
+            "name": "helloworld",
+            "file": "helloworld.yaml",
+            "count": 3
+        },
+        {
+            "name": "rnn-serving",
+            "file": "rnn_serving.yaml",
+            "count": 1
+        }
+    ]
+}
