@@ -1,0 +1,8 @@
+{
+  "name": "serverless-example",
+  "version": "0.1.0",
+  "description": "A serverless example with empty dependencies",
+  "dependencies": {},
+  "author": "Rustem Feyzkhanov",
+  "license": "MIT"
+}

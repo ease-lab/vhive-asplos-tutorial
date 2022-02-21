@@ -1,0 +1,10 @@
+{
+  "name": "serverless-example",
+  "version": "0.1.0",
+  "description": "A serverless example with empty dependencies",
+  "dependencies": {
+    "serverless-step-functions": "3.5.1"
+  },
+  "author": "Rustem Feyzkhanov",
+  "license": "MIT"
+}

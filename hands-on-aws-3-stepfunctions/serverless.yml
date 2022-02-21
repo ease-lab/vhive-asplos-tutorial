@@ -1,0 +1,64 @@
+service: ServerlessTutorialStepFunctions
+
+frameworkVersion: ">=1.2.0"
+
+provider:
+  name: aws
+  runtime: python3.7
+  memorySize: 128
+  timeout: 10
+
+package:
+  exclude:
+    - node_modules/**
+
+functions:
+  LambdaMap:
+    handler: index.handler_map
+  LambdaTask:
+    handler: index.handler_task
+  LambdaReduce:
+    handler: index.handler_reduce
+
+stepFunctions:
+  stateMachines:
+    helloWorldStepFunction:
+      events:
+        - http:
+            path: startFunction
+            method: GET
+      definition:
+        StartAt: stepStart
+        States:
+          stepStart:
+            Type: Task
+            Resource:
+              Fn::GetAtt:
+                - LambdaMap
+                - Arn
+            Next: stepMap
+          stepMap:
+            Type: Map
+            ItemsPath: "$.tasks"
+            Iterator:
+              StartAt: stepTask
+              States:
+                stepTask:
+                  Type: Task
+                  Resource:
+                    Fn::GetAtt:
+                      - LambdaTask
+                      - Arn
+                  End: true
+            ResultPath: "$.map_result"
+            Next: stepReduce
+          stepReduce:
+            Type: Task
+            Resource:
+              Fn::GetAtt:
+                - LambdaReduce
+                - Arn
+            End: true
+
+plugins:
+  - serverless-step-functions

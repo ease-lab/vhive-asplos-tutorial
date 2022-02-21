@@ -1,0 +1,8 @@
+
+.DS_Store
+hands-on-aws-*/package-lock.json
+hands-on-aws-*/node_modules
+hands-on-aws-*/.serverless
+hands-on-aws-*/*/package-lock.json
+hands-on-aws-*/*/.serverless
+hands-on-aws-*/*/node_modules

@@ -1,0 +1,54 @@
+service: ServerlessTutorialSQS
+
+frameworkVersion: ">=1.2.0"
+
+provider:
+  name: aws
+  runtime: python3.7
+  memorySize: 128
+  timeout: 10
+  iamRoleStatements:
+    # Allows Lambda to download and upload files to S3 bucket
+    - Effect: Allow
+      Action:
+        - 's3:ListBucket'
+      Resource: 'arn:aws:s3:::${env:S3BucketName}'
+    - Effect: Allow
+      Action:
+        - 's3:PutObject'
+        - 's3:GetObject'
+      Resource: 'arn:aws:s3:::${env:S3BucketName}/*'
+
+package:
+  exclude:
+    - node_modules/**
+
+functions:
+  HelloWorld:
+    handler: index.handler
+    environment:
+      S3_BUCKET: ${env:S3BucketName}
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - ReadQueue
+              - Arn
+
+resources:
+  Resources:
+    ReadQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: "ReadQueue"
+        VisibilityTimeout: 60
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt:
+              - DeadLetterQueue
+              - Arn
+          maxReceiveCount: 1
+    DeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: "DeadLetterQueue"

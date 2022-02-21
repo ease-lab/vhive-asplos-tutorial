@@ -1,0 +1,22 @@
+service: ServerlessTutorialHelloWorld
+
+frameworkVersion: ">=1.2.0"
+
+provider:
+  name: aws
+  runtime: python3.7
+  memorySize: 128
+  timeout: 10
+
+package:
+  exclude:
+    - node_modules/**
+
+functions:
+  HelloWorld:
+    handler: index.handler
+    events:
+      - http:
+          path: hello
+          method: get
+
