@@ -52,3 +52,14 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: "DeadLetterQueue"
+  Outputs:
+    ReadQueueUrl:
+      Value:
+        Fn::GetAtt:
+          - ReadQueue
+          - QueueUrl
+    DeadLetterQueueUrl:
+      Value:
+        Fn::GetAtt:
+          - DeadLetterQueue
+          - QueueUrl
