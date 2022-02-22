@@ -6,8 +6,8 @@
             "count": 3
         },
         {
-            "name": "rnn-serving",
-            "file": "rnn_serving.yaml",
+            "name": "pyaes",
+            "file": "pyaes.yaml",
             "count": 1
         }
     ]
