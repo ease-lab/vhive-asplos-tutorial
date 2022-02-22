@@ -45,14 +45,20 @@ order. If you are not logged into the VM yet, you can use the following command:
 ssh -i <path-to-key> -L 9411:127.0.0.1:9411 vhive-user@<IP>
 ```
 
-First we start the basic containerd that we will use to run infrastructure
+Then you can use the single node setup script to set up the environment
+```
+cd ~/vhive/
+./scripts/cloudlab/setup_node.sh
+```
+
+We start the basic containerd that we will use to run infrastructure
 containers.
 
 ```
 sudo screen -dmS containerd containerd; sleep 5;
 ```
 
-Then we start the firecracker containerd that will run the functions.
+We start the firecracker containerd that will run the functions.
 
 ```
 sudo PATH=$PATH screen -dmS firecracker /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml; sleep 5;
