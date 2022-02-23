@@ -1,4 +1,4 @@
-service: ServerlessTutorialSQS
+service: ServerlessTutorialSQS-${env:HASH}
 
 frameworkVersion: ">=1.2.0"
 
@@ -40,7 +40,7 @@ resources:
     ReadQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: "ReadQueue"
+        QueueName: "ReadQueue-${env:HASH}"
         VisibilityTimeout: 60
         RedrivePolicy:
           deadLetterTargetArn:
@@ -51,7 +51,7 @@ resources:
     DeadLetterQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: "DeadLetterQueue"
+        QueueName: "DeadLetterQueue-${env:HASH}"
   Outputs:
     ReadQueueUrl:
       Value:

@@ -1,4 +1,4 @@
-service: ServerlessTutorialHelloWorld
+service: ServerlessTutorialHelloWorld-${env:HASH}
 
 frameworkVersion: ">=1.2.0"
 
@@ -19,4 +19,3 @@ functions:
       - http:
           path: hello
           method: get
-
