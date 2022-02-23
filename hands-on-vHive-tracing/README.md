@@ -68,7 +68,6 @@ After we confirmed that both of them are running using `sudo screen -ls` we can
 build and start the vHive CRI using:
 
 ```
-cd ~/vhive/
 sudo screen -dmS vhive ./vhive; sleep 5;
 ```
 
@@ -151,7 +150,7 @@ From that we need the address of the streaming service.
 To invoke it we need the URL without the `https://`
 
 ```
-~/vSwarm/tools/test-client
+~/vSwarm/tools/test-client -addr <address>:80
 ```
 
 ## Clean-up
