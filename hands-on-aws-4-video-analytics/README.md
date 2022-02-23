@@ -5,8 +5,8 @@
 Here we install relevant dependencies to run serverless framework.
 
 ```
-!pip install awscli --upgrade --user
-!npm install -g serverless
+pip install awscli --upgrade --user
+sudo apt install jq
 ```
 
 # Setting AWS environmental variables
@@ -14,18 +14,27 @@ Here we install relevant dependencies to run serverless framework.
 Here we set up AWS environmental variables so that we will be able to deploy to our AWS account. We will need access key id, secret access key and account id. You will need to replace AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ACCOUNT_ID with your values. Please use test account and temporary credentials or deactivate credentials after usage.
 
 ```
-%env AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
-%env AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
-%env AWS_ACCOUNT_ID=<AWS_ACCOUNT_ID>
-%env AWS_DEFAULT_REGION=us-west-1
+export AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
+export AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
+export AWS_ACCOUNT_ID=<AWS_ACCOUNT_ID>
+export AWS_DEFAULT_REGION=us-west-1
 ```
+# Setting environmental variables
+
+Here we set up unique environmental variables which we will be using to name our functions.
+
+```
+export UNIQUE_ID=<firstname-lastname>
+```
+
 # Create bucket
+add bucket name enivironment variable.
 ```
 aws s3api create-bucket \
-    --bucket firstname-lastname \
-    --region us-east-1
+    --bucket $UNIQUE_ID \
+    --create-bucket-configuration LocationConstraint=us-west-1
 
-aws s3api delete-bucket --bucket <value>
+aws s3api delete-bucket --bucket $UNIQUE_ID
 ```
 # Lambda deployment - object recog
 
@@ -33,125 +42,83 @@ Let's deploy the object recognition lambda.
 First we have to create a role which can be assumed by the lambda function.
 
 ```
-aws iam create-role --role-name recog-role --assume-role-policy-document ./roles/trust-policy.json
-aws iam create-role --role-name decoder-role --assume-role-policy-document ./roles/trust-policy.json
-aws iam create-role --role-name streaming-role --assume-role-policy-document ./roles/trust-policy.json
+aws iam create-role --role-name lambda-role-$UNIQUE_ID --assume-role-policy-document file://roles/lambda-role.json | jq '.Role.Arn'
+# export the role variable for later use
+export LAMBDA_ROLE_ARN=<arn>
 
 # delete role in case of typo
-aws iam  delete-role --role-name <value>
+aws iam  delete-role --role-name lambda-role-$UNIQUE_ID
 ```
 create policy with the list of permissions for the lambda
 ```
-aws iam create-policy --policy-name recog-policy --policy-document file://roles/streaming-policy.json
-
+aws iam create-policy --policy-name lambda-policy-$UNIQUE_ID --policy-document file://roles/lambda-policy.json | jq '.Policy.Arn'
+export LAMBDA_POLICY_ARN=<arn>
 # delete role in case of typo
-aws iam  delete-policy --policy-arn <value>
+aws iam  delete-policy --policy-arn $LAMBDA_POLICY_ARN
 ```
 Now, we will attach the permissions for the above role.
 ```
-aws iam attach-role-policy --role-name recog-role --policy-name recog-policy
+aws iam attach-role-policy --role-name lambda-role-$UNIQUE_ID --policy-arn $LAMBDA_POLICY_ARN
+
+# detach in case of typo
+aws iam detach-role-policy --role-name lambda-role-$UNIQUE_ID --policy-arn $LAMBDA_POLICY_ARN
 ```
 Create lambda function from ECR image
 ```
-aws lambda create-function --function-name recog \
+aws lambda create-function --function-name recog-$UNIQUE_ID \
 --package-type Image \
---code ImageUri="356764711652.dkr.ecr.us-west-1.amazonaws.com/video-analytics-recog-aws:latest" \
---role "arn:aws:iam::356764711652:role/recog-role" \
+--code ImageUri="705254273855.dkr.ecr.us-west-1.amazonaws.com/video-analytics-recog-aws:latest" \
+--role $LAMBDA_ROLE_ARN \
 --timeout 120 \
 --memory-size 4096 \
---environment Variables={bucketName=bucketName} \
+--environment Variables={BUCKET_NAME=$UNIQUE_ID} \
 --tracing-config Mode=Active \
 --publish
 
 # delete command in case of typo
-aws lambda delete-function --function-name <value>
-```
-# Lambda invoke - recog
-
-Invoke Lambda using cli
-```
-aws lambda invoke --function-name streaming \
---cli-binary-format raw-in-base64-out \
---payload '{"transferType": "S3", "s3key": "frames/decoder-frame-1.jpg"}' response.json
+aws lambda delete-function --function-name recog-$UNIQUE_ID
 ```
 
 # Lambda deployment - decoder
 
-Let's deploy the object recognition lambda.
-First we have to create a role which can be assumed by the lambda function.
-
-```
-aws iam create-role --role-name decoder-role --assume-role-policy-document ./roles/trust-policy.json
-```
-create policy with the list of permissions for the lambda
-```
-aws iam create-policy --policy-name decoder-policy --policy-document file://roles/streaming-policy.json
-```
-Now, we will attach the permissions for the above role.
-```
-aws iam attach-role-policy --role-name decoder-role --policy-name decoder-policy
-```
 Create lambda function from ECR image
 ```
-aws lambda create-function --function-name decoder \
+aws lambda create-function --function-name decoder-$UNIQUE_ID \
 --package-type Image \
---code ImageUri="356764711652.dkr.ecr.us-west-1.amazonaws.com/video-analytics-streaming-aws:latest" \
---role "arn:aws:iam::356764711652:role/decoder-role" \
+--code ImageUri="705254273855.dkr.ecr.us-west-1.amazonaws.com/video-analytics-decoder-aws:latest" \
+--role $LAMBDA_ROLE_ARN \
 --timeout 120 \
 --memory-size 4096 \
---environment Variables={bucketName=bucket} \
+--environment Variables="{BUCKET_NAME=$UNIQUE_ID,RECOG_FUNCTION=recog-$UNIQUE_ID}" \
 --tracing-config Mode=Active \
 --publish
 
 # delete command in case of typo
-aws lambda delete-function --function-name <value>
+aws lambda delete-function --function-name decoder-$UNIQUE_ID
 ```
-# Lambda invoke - decoder
-
-Invoke Lambda using cli
-```
-aws lambda invoke --function-name streaming \
---cli-binary-format raw-in-base64-out \
---payload '{"transferType": "S3", "s3key": "streaming-video.mp4"}' response.json
-```
-
 # Lambda deployment - streaming
 
-Let's deploy the object recognition lambda.
-First we have to create a role which can be assumed by the lambda function.
-
-```
-aws iam create-role --role-name streaming-role --assume-role-policy-document ./roles/trust-policy.json
-```
-create policy with the list of permissions for the lambda
-```
-aws iam create-policy --policy-name streaming-policy --policy-document file://roles/streaming-policy.json
-```
-Now, we will attach the permissions for the above role.
-```
-aws iam attach-role-policy --role-name streaming-role --policy-name streaming-policy
-```
 Create lambda function from ECR image
 ```
-aws lambda create-function --function-name streaming \
+aws lambda create-function --function-name streaming-$UNIQUE_ID \
 --package-type Image \
---code ImageUri="356764711652.dkr.ecr.us-west-1.amazonaws.com/video-analytics-streaming-aws:latest" \
---role "arn:aws:iam::356764711652:role/streaming-role" \
+--code ImageUri="705254273855.dkr.ecr.us-west-1.amazonaws.com/video-analytics-streaming-aws:latest" \
+--role $LAMBDA_ROLE_ARN \
 --timeout 120 \
 --memory-size 4096 \
---environment Variables={bucketName=bucket} \
+--environment Variables="{BUCKET_NAME=$UNIQUE_ID,DECODER_FUNCTION=decoder-$UNIQUE_ID}" \
 --tracing-config Mode=Active \
 --publish
 
 # delete command in case of typo
-aws lambda delete-function --function-name <value>
+aws lambda delete-function --function-name streaming-$UNIQUE_ID
 ```
 
 # Lambda invoke - streaming
 
 Invoke Lambda using cli
 ```
-aws lambda invoke --function-name streaming \
+aws lambda invoke --function-name streaming-$UNIQUE_ID \
 --cli-binary-format raw-in-base64-out \
---payload '{ "name": "bla", "TransferType": "S3" }' response.json
+--payload '{ "name": "'$UNIQUE_ID'", "TransferType": "S3" }' response.json
 ```

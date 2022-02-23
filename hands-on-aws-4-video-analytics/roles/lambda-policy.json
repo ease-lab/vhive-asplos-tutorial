@@ -4,7 +4,7 @@
         {
             "Action": "lambda:InvokeFunction",
             "Effect": "Allow",
-            "Resource": "<enter the second lambda here"
+            "Resource": "*"
         },
         {
             "Effect": "Allow",
@@ -34,6 +34,14 @@
             "Action": [
                 "logs:CreateLogStream",
                 "logs:PutLogEvents"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ecr:SetRepositoryPolicy",
+                "ecr:GetRepositoryPolicy"
             ],
             "Resource": "*"
         }
