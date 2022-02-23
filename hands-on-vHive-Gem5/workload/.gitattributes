@@ -1,0 +1,2 @@
+workload/vmlinux filter=lfs diff=lfs merge=lfs -text
+disk-image.img filter=lfs diff=lfs merge=lfs -text
