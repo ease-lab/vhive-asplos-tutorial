@@ -78,40 +78,9 @@ aws lambda create-function --function-name recog-$UNIQUE_ID \
 # delete command in case of typo
 aws lambda delete-function --function-name recog-$UNIQUE_ID
 ```
-
-# Lambda deployment - decoder
-
-Create lambda function from ECR image
+# Deploy decoder and streaming lambdas
 ```
-aws lambda create-function --function-name decoder-$UNIQUE_ID \
---package-type Image \
---code ImageUri="705254273855.dkr.ecr.us-west-1.amazonaws.com/video-analytics-decoder-aws:latest" \
---role $LAMBDA_ROLE_ARN \
---timeout 120 \
---memory-size 4096 \
---environment Variables="{BUCKET_NAME=$UNIQUE_ID,RECOG_FUNCTION=recog-$UNIQUE_ID}" \
---tracing-config Mode=Active \
---publish
-
-# delete command in case of typo
-aws lambda delete-function --function-name decoder-$UNIQUE_ID
-```
-# Lambda deployment - streaming
-
-Create lambda function from ECR image
-```
-aws lambda create-function --function-name streaming-$UNIQUE_ID \
---package-type Image \
---code ImageUri="705254273855.dkr.ecr.us-west-1.amazonaws.com/video-analytics-streaming-aws:latest" \
---role $LAMBDA_ROLE_ARN \
---timeout 120 \
---memory-size 4096 \
---environment Variables="{BUCKET_NAME=$UNIQUE_ID,DECODER_FUNCTION=decoder-$UNIQUE_ID}" \
---tracing-config Mode=Active \
---publish
-
-# delete command in case of typo
-aws lambda delete-function --function-name streaming-$UNIQUE_ID
+./deploy-decoder-Streaming-Lambda.sh
 ```
 
 # Lambda invoke - streaming
@@ -121,4 +90,14 @@ Invoke Lambda using cli
 aws lambda invoke --function-name streaming-$UNIQUE_ID \
 --cli-binary-format raw-in-base64-out \
 --payload '{ "name": "'$UNIQUE_ID'", "TransferType": "S3" }' response.json
+```
+
+# Lambda response
+```
+cat ./response.json
+```
+
+# Clean up resources
+```
+./cleanup.sh
 ```
