@@ -1,9 +1,10 @@
-service: ServerlessTutorialHelloWorld
+service: ServerlessTutorialHelloWorld-${env:HASH}
 
 frameworkVersion: ">=1.2.0"
 
 provider:
   name: aws
+  region: ${env:AWS_DEFAULT_REGION}
   runtime: python3.7
   memorySize: 128
   timeout: 10
@@ -18,5 +19,4 @@ functions:
     events:
       - http:
           path: hello
-          method: get
-
+          method: post

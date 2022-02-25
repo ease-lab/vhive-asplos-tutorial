@@ -1,9 +1,10 @@
-service: ServerlessTutorialSQS
+service: ServerlessTutorialSQS-${env:HASH}
 
 frameworkVersion: ">=1.2.0"
 
 provider:
   name: aws
+  region: ${env:AWS_DEFAULT_REGION}
   runtime: python3.7
   memorySize: 128
   timeout: 10
@@ -12,12 +13,12 @@ provider:
     - Effect: Allow
       Action:
         - 's3:ListBucket'
-      Resource: 'arn:aws:s3:::${env:S3BucketName}'
+      Resource: 'arn:aws:s3:::vhive-aws-tutorial'
     - Effect: Allow
       Action:
         - 's3:PutObject'
         - 's3:GetObject'
-      Resource: 'arn:aws:s3:::${env:S3BucketName}/*'
+      Resource: 'arn:aws:s3:::vhive-aws-tutorial/*'
 
 package:
   exclude:
@@ -40,7 +41,7 @@ resources:
     ReadQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: "ReadQueue"
+        QueueName: "ReadQueue-${env:HASH}"
         VisibilityTimeout: 60
         RedrivePolicy:
           deadLetterTargetArn:
@@ -51,4 +52,15 @@ resources:
     DeadLetterQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: "DeadLetterQueue"
+        QueueName: "DeadLetterQueue-${env:HASH}"
+  Outputs:
+    ReadQueueUrl:
+      Value:
+        Fn::GetAtt:
+          - ReadQueue
+          - QueueUrl
+    DeadLetterQueueUrl:
+      Value:
+        Fn::GetAtt:
+          - DeadLetterQueue
+          - QueueUrl
