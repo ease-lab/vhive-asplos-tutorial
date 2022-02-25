@@ -17,25 +17,7 @@ We created a separate hands on [here](setup.md) where you can find all instructi
 ### 1. Start your disk image and setup your function
 Before running the simulator you need to setup your containerized function onto the disk image.
 For this we will use the qemu emulator as it faster and has access to the internet for pulling the image. Run the long command for qemu in the script `run_qemu.sh`.
-<!-- ```bash
-DISK_IMG=workload/disk-image.img
-KERNEL=workload/vmlinux
-RAM=8G
-CPUS=4
-
-sudo qemu-system-x86_64 \
-    -nographic \
-    -cpu host -enable-kvm \
-    -smp ${CPUS} \
-    -m ${RAM} \
-    -device e1000,netdev=net0 \
-    -netdev type=user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22  \
-    -drive format=raw,file=$DISK_IMG \
-    -kernel $KERNEL \
-    -append 'earlyprintk=ttyS0 console=ttyS0 lpj=7999923 root=/dev/hda2'
-``` -->
-
-```
+```bash
 ./scripts/run_qemu.sh
 ```
 Qemu will boot with the disk image and the kernel we provided for you in the workload folder.
@@ -44,11 +26,11 @@ As soon as the system is booted you can login as root (password `root`). To setu
 1. Pull and start the container.
 ```bash
 # Pull your containerized function image
-docker pull davidschall/aes-go
+docker pull <your function image>  # i.e. vhiveease/aes-go
 # Start your function container
 # -d detaches the process and we can continue in the same console.
 # -p must be set to export the ports
-docker run -d --name mycontainer -p 50051:50051 davidschall/aes-go
+docker run -d --name mycontainer -p 50051:50051 <your function image>  # i.e. vhiveease/aes-go
 ```
 2. The container is running ans we want to test if everything is fine on the software side. For this we added for you a very small client in the disk image.
    > Note you can find the source code of the client together with your hands out material.
