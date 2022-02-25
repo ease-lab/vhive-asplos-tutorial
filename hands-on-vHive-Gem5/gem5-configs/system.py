@@ -16,7 +16,7 @@ class MySystem(System):
 
         # Set up the clock domain and the voltage domain
         self.clk_domain = SrcClockDomain()
-        self.clk_domain.clock = '3GHz'
+        self.clk_domain.clock = '2.5GHz'
         self.clk_domain.voltage_domain = VoltageDomain()
 
         # For x86, there is an I/O gap from 3GB to 4GB.
@@ -167,7 +167,7 @@ class MySystem(System):
 
         # Create an L3 cache (with crossbar)
         self.llcbus = L2XBar(width = 64)
-        self.llc = L2Cache()
+        self.llc = LLCCache()
 
         # Connect the LLC
         self.llc.connectCPUSideBus(self.llcbus)

@@ -81,16 +81,15 @@ class L1DCache(L1Cache):
         """Connect this cache's port to a CPU dcache port"""
         self.cpu_side = cpu.dcache_port
 
-class L2Cache(Cache):
-    """Simple L2 Cache with default values"""
+class LLCCache(Cache):
+    """Simple LLC Cache with default values"""
 
     # Default parameters
-    # size = '256kB'
-    size = '1MB'
+    size = '128kB'
     assoc = 8
-    tag_latency = 20
-    data_latency = 20
-    response_latency = 20
+    tag_latency = 12
+    data_latency = 12
+    response_latency = 12
     mshrs = 20
     tgts_per_mshr = 12
     write_buffers = 56

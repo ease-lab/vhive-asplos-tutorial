@@ -4,7 +4,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT="$( cd $DIR && cd .. && pwd)"
 
-DISK_IMG=$ROOT/workload/disk-image4.img
+DISK_IMG=$ROOT/workload/disk-image.img
 KERNEL=$ROOT/workload/vmlinux
 RAM=8G
 CPUS=4
@@ -19,3 +19,4 @@ sudo qemu-system-x86_64 \
     -drive format=raw,file=$DISK_IMG \
     -kernel $KERNEL \
     -append 'earlyprintk=ttyS0 console=ttyS0 lpj=7999923 root=/dev/hda2'
+
