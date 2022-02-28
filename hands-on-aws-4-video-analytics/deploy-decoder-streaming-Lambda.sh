@@ -19,3 +19,5 @@ aws lambda create-function --function-name decoder-$UNIQUE_ID \
 --environment Variables="{BUCKET_NAME=$UNIQUE_ID,RECOG_FUNCTION=recog-$UNIQUE_ID}" \
 --tracing-config Mode=Active \
 --publish
+
+sleep 30s
