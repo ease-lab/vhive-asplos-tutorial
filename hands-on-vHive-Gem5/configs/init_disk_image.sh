@@ -65,16 +65,16 @@ apt-get install -y \
 && apt-get install -y docker-ce docker-ce-cli containerd.io
 
 
-# # Install docker-compose
-# curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
-# && chmod +x /usr/local/bin/docker-compose
+# Install docker-compose
+curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
+&& chmod +x /usr/local/bin/docker-compose
 
 
-# # Install golang
-# wget --continue --quiet https://golang.org/dl/go1.16.4.linux-amd64.tar.gz
-# tar -C /usr/local -xzf go1.16.4.linux-amd64.tar.gz
-# export PATH=$PATH:/usr/local/go/bin
-# sh -c  "echo 'export PATH=\$PATH:/usr/local/go/bin' >> /etc/profile"
+# Install golang
+wget --continue --quiet https://golang.org/dl/go1.16.4.linux-amd64.tar.gz
+tar -C /usr/local -xzf go1.16.4.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+sh -c  "echo 'export PATH=\$PATH:/usr/local/go/bin' >> /etc/profile"
 
 
 # # Clone the vSwarm repo

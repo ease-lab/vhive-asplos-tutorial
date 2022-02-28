@@ -75,7 +75,7 @@ class L1DCache(L1Cache):
     """Simple L1 data cache with default values"""
 
     # Set the default size
-    size = '32kB'
+    size = '16kB'
 
     def connectCPU(self, cpu):
         """Connect this cache's port to a CPU dcache port"""
