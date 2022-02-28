@@ -4,8 +4,8 @@ import io
 import os
 
 def handler(event, context):
-	print(event)
+	print(event['body'])
 	return {
 		'statusCode': 200,
-		'body': f'HelloWorld {event}'
+		'body': f'Hello {event["body"]}'
 	}

@@ -6,3 +6,6 @@ hands-on-aws-*/.serverless
 hands-on-aws-*/*/package-lock.json
 hands-on-aws-*/*/.serverless
 hands-on-aws-*/*/node_modules
+hands-on-vHive-Gem5/gem5-configs/__pycache__/*
+hands-on-vHive-Gem5/gem5
+hands-on-vHive-Gem5/workload
