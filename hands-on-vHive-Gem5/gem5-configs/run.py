@@ -39,6 +39,18 @@ def boot_linux():
     return success, exit_cause
 
 
+def simulateUntilExitEvent():
+    '''
+    return: True if m5_exit event occur, False otherwise
+    '''
+    print("Start simulation...")
+    exit_event = m5.simulate()
+    exit_cause = exit_event.getCause()
+    success = exit_cause == "m5_exit instruction encountered"
+    if success:
+        print("Exit cause: %s | code: %d" % (exit_cause, exit_event.getCode()))
+    return success
+
 def run_function():
     '''
     Output 1: False if errors occur, True otherwise
@@ -60,7 +72,7 @@ if __name__ == "__m5_main__":
     args = parse_arguments()
 
     # create the system we are going to simulate
-    system = MySystem(args.kernel, args.disk)
+    system = MySystem(args.kernel, args.disk, CPUModel=TimingSimpleCPU)
 
     # Read in the script file passed in via an option.
     # This file gets read and executed by the simulated system after boot.
@@ -80,7 +92,7 @@ if __name__ == "__m5_main__":
     m5.instantiate()
 
     # Boot Linux using Kvm
-    success,_ = boot_linux()
+    success = simulateUntilExitEvent()
     if not success:
         print("An error occurred while booting linux")
 
@@ -93,9 +105,9 @@ if __name__ == "__m5_main__":
     # Now start the simulation again.
     # The next step in the script will be executed which is
     # running the invoker
-    success,_ = run_function()
+    success = simulateUntilExitEvent()
     if not success:
-        print("An error occurred while booting linux")
+        print("An error occurred while invoking the function")
 
     # Once the script sends the next exit command we know that
     # the invoker is finish.

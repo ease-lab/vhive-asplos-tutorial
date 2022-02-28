@@ -21,7 +21,7 @@ gcloud compute reservations create reservation-test \
 # (It takes about a minute to create 50 instances)
 gcloud compute instances bulk create \
     --name-pattern="vhive-vm-###"\
-    --count=1 \
+    --count=<N> \
     --enable-nested-virtualization \
     --machine-type=n1-standard-4 \
     --boot-disk-size=100GB \
@@ -32,7 +32,7 @@ gcloud compute instances bulk create \
     --reservation-affinity=any
 ```
 
-* Retrieve created instances: `gcloud compute instances list`.
+* Retrieve all external IPs of created instances: `gcloud compute instances list | tail -n +2 | awk '{print $5}'`.
 
 ## Create an image
 
