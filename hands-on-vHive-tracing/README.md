@@ -184,12 +184,23 @@ screen -dmS zipkin bash -c 'source /etc/profile; istioctl dashboard zipkin'
 ```
 You can check that zipkin dashboard is running with `screen -ls`.
 
-Then we can deploy the functions to run the video analytics with a single frame:
+Export AWS variables for future use:
+
 ```
 export AWS_ACCESS_KEY=<YOUR_KEY>
 export AWS_SECRET_KEY=<YOUR_SECRET>
-export BUCKET_NAME=<BUCKET NAME>
+export BUCKET_NAME=<firstname-lastname>
 export ENABLE_TRACING=”true”
+```
+Create S3 bucket to store the ephemeral data.
+```
+pip install awscli --upgrade --user
+aws s3api create-bucket --bucket $BUCKET_NAME --create-bucket-configuration LocationConstraint=us-west-1
+## if the bucket already exits, change the BUCKET_NAME (re-export with different value) variable try again.
+
+```
+Then we can deploy the functions to run the video analytics with a single frame:
+```
 ~/vSwarm/tools/kn_deploy.sh ~/vSwarm/benchmarks/video-analytics/knative_yamls/s3_single/*
 ```
 
