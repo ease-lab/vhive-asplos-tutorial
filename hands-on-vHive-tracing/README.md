@@ -196,7 +196,7 @@ Create S3 bucket to store the ephemeral data.
 ```
 pip install awscli --upgrade --user
 aws s3api create-bucket --bucket $BUCKET_NAME --create-bucket-configuration LocationConstraint=us-west-1
-## if the bucket already exits, change the BUCKET_NAME (re-export with different value) variable try again.
+## if the bucket already exists, change the BUCKET_NAME (re-export with different value) variable try again.
 
 ```
 Then we can deploy the functions to run the video analytics with a single frame:
