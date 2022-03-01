@@ -184,21 +184,18 @@ screen -dmS zipkin bash -c 'source /etc/profile; istioctl dashboard zipkin'
 ```
 You can check that zipkin dashboard is running with `screen -ls`.
 
+Goto this URL and create an AWS S3 bucket.
+[Create bucket](https://mybinder.org/v2/gh/ease-lab/vhive-asplos-tutorial/HEAD?labpath=hands-on-vHive-tracing%2Fcreate-bucket.ipynb)
+
 Export AWS variables for future use:
 
 ```
 export AWS_ACCESS_KEY=<YOUR_KEY>
 export AWS_SECRET_KEY=<YOUR_SECRET>
-export BUCKET_NAME=<firstname-lastname>
+export BUCKET_NAME=<HASH from the create bucket step>
 export ENABLE_TRACING=”true”
 ```
-Create S3 bucket to store the ephemeral data.
-```
-pip install awscli --upgrade --user
-aws s3api create-bucket --bucket $BUCKET_NAME --create-bucket-configuration LocationConstraint=us-west-1
-## if the bucket already exists, change the BUCKET_NAME (re-export with different value) variable try again.
 
-```
 Then we can deploy the functions to run the video analytics with a single frame:
 ```
 ~/vSwarm/tools/kn_deploy.sh ~/vSwarm/benchmarks/video-analytics/knative_yamls/s3_single/*
