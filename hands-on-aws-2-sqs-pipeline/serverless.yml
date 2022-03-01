@@ -28,7 +28,7 @@ functions:
   HelloWorld:
     handler: index.handler
     environment:
-      S3_BUCKET: ${env:S3BucketName}
+      S3_BUCKET: vhive-aws-tutorial
     events:
       - sqs:
           arn:
