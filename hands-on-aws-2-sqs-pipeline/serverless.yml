@@ -13,12 +13,12 @@ provider:
     - Effect: Allow
       Action:
         - 's3:ListBucket'
-      Resource: 'arn:aws:s3:::vhive-aws-tutorial'
+      Resource: 'arn:aws:s3:::vhive-aws-tutorial-loc'
     - Effect: Allow
       Action:
         - 's3:PutObject'
         - 's3:GetObject'
-      Resource: 'arn:aws:s3:::vhive-aws-tutorial/*'
+      Resource: 'arn:aws:s3:::vhive-aws-tutorial-loc/*'
 
 package:
   exclude:
@@ -28,7 +28,7 @@ functions:
   HelloWorld:
     handler: index.handler
     environment:
-      S3_BUCKET: vhive-aws-tutorial
+      S3_BUCKET: vhive-aws-tutorial-loc
     events:
       - sqs:
           arn:
