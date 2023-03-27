@@ -1,4 +1,4 @@
 aws_xray_sdk==2.9.0
 boto3==1.21.3
 Pillow==9.0.1
-redis==4.1.4
+redis==4.5.3
